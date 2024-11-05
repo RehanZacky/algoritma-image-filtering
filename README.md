@@ -1,57 +1,54 @@
-# Bisection_method-in-phyton
-You can use the bisection method to find the root of the equation x^4 - x^3 + 2x^2 - 2x - 12 = 0
-in the interval [-2, 0] with a tolerance of 0.0001. Here's the implementation in Python:
+# Algoritma-Image-Filtering
+Algoritma ini menggunakan tiga variabel utama:
+
+H: Matriks atau array kernel (filter).
+X: Matriks atau array untuk gambar input (gambar asli).
+Y: Matriks atau array untuk hasil dari konvolusi gambar.
 
 ```python
-def bisection_method(f, a, b, tolerance, max_iterations=100):
-    if f(a) * f(b) >= 0:
-        raise ValueError("The signs of f(a) and f(b) must be different.")
-    
-    iteration = 0
-    while (b - a) / 2.0 > tolerance and iteration < max_iterations:
-        c = (a + b) / 2.0
-        if f(c) == 0:
-            return round(c, 4)  # Using round() to limit decimal places
-        elif f(a) * f(c) < 0:
-            b = c
-        else:
-            a = c
-        iteration += 1
-        print(f"Iteration {iteration}: a = {a:.4f}, b = {b:.4f}, c = {c:.4f}, f(c) = {f(c):.6f}")
-    
-    return round((a + b) / 2.0, 4)
+import numpy as np
 
-# Function for the equation x^4 - x^3 + 2x^2 - 2x - 12
-def equation(x):
-    return x**4 - x**3 + 2*x**2 - 2*x - 12
+# Definisikan ukuran kernel dan gambar input
+kernel_size = 3  # Misalnya 3x3
+image_size = 5   # Misalnya 5x5
 
-a = -2.0
-b = 0.0
-tolerance = 0.0001
+# 1. Buat variabel H sebagai matriks kernel
+H = np.array([[0, -1, 0],
+              [-1, 5, -1],
+              [0, -1, 0]])
 
-root = bisection_method(equation, a, b, tolerance)
-print("Root of the equation: {:.4f}".format(root))
+# 2. Buat variabel X sebagai matriks untuk gambar input
+X = np.random.randint(0, 256, (image_size, image_size))  # Matriks 5x5 dengan nilai random antara 0-255
+print("Input Image (X):\n", X)
+
+# 3. Inisialisasi matriks Y untuk menyimpan hasil konvolusi
+Y = np.zeros((image_size - kernel_size + 1, image_size - kernel_size + 1))
+
+# 4. Lakukan konvolusi antara X dan H untuk menghasilkan Y
+for i in range(Y.shape[0]):
+    for j in range(Y.shape[1]):
+        # Ambil bagian dari X yang sesuai dengan ukuran kernel
+        region = X[i:i + kernel_size, j:j + kernel_size]
+        # Hitung konvolusi: kalikan elemen-elemen region dengan H, lalu jumlahkan
+        Y[i, j] = np.sum(region * H)
+
+print("\nOutput Image (Y) setelah konvolusi:\n", Y)
 ```
 Output:
 ```
-Iteration 1: a = -2.0000, b = -1.0000, c = -1.0000, f(c) = -6.000000
-Iteration 2: a = -1.5000, b = -1.0000, c = -1.5000, f(c) = 3.937500
-Iteration 3: a = -1.5000, b = -1.2500, c = -1.2500, f(c) = -1.980469
-Iteration 4: a = -1.3750, b = -1.2500, c = -1.3750, f(c) = 0.705322
-Iteration 5: a = -1.3750, b = -1.3125, c = -1.3125, f(c) = -0.701157
-Iteration 6: a = -1.3750, b = -1.3438, c = -1.3438, f(c) = -0.014388
-Iteration 7: a = -1.3594, b = -1.3438, c = -1.3594, f(c) = 0.341276
-Iteration 8: a = -1.3516, b = -1.3438, c = -1.3516, f(c) = 0.162406
-Iteration 9: a = -1.3477, b = -1.3438, c = -1.3477, f(c) = 0.073750
-Iteration 10: a = -1.3457, b = -1.3438, c = -1.3457, f(c) = 0.029617
-Iteration 11: a = -1.3447, b = -1.3438, c = -1.3447, f(c) = 0.007598
-Iteration 12: a = -1.3447, b = -1.3442, c = -1.3442, f(c) = -0.003399
-Iteration 13: a = -1.3445, b = -1.3442, c = -1.3445, f(c) = 0.002099
-Iteration 14: a = -1.3445, b = -1.3444, c = -1.3444, f(c) = -0.000650
-Root of the equation: -1.3444
+Input Image (X):
+ [[ 46 247 236 129 118]
+ [246 131  19 239 182]
+ [ 49 233 201  32 110]
+ [182 173 199 235 225]
+ [ 22 123 199 164 247]]
+
+Output Image (Y) setelah konvolusi:
+ [[ -90. -712.  833.]
+ [ 611.  522. -625.]
+ [ 128.  187.  555.]]
 ```
-In the code above, we use the equation function to compute the value of the equation x^4 - x^3 + 2x^2 - 2x - 12
-Then, we call the bisection_method with the interval [-2, 0] and a tolerance of 0.0001 to find the root of the equation. 
-The root that is found is rounded to 4 decimal places as per the requested precision. 
-Additionally, we have set a maximum iteration limit of 100 to ensure that the iteration stops 
-if a solution is not found after a sufficiently large number of iterations.
+Penjelasan
+Matriks H digunakan sebagai kernel, yang akan melakukan operasi filter pada matriks X.
+Matriks X berfungsi sebagai gambar input yang nilainya dapat berupa pixel intensitas gambar.
+Matriks Y adalah hasil output setelah konvolusi antara kernel H dan gambar X.
